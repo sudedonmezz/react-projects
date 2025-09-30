@@ -1,5 +1,5 @@
 import './OrdersPage.css';
-import './header.css';
+import { Header } from '../components/Header';
 
 export function OrdersPage()
 {
@@ -7,7 +7,7 @@ export function OrdersPage()
   <>
   <title>Orders</title>
 
-   <div className="header">
+   <Header>
       <div className="left-section">
         <a href="/" className="header-link">
           <img className="logo"
@@ -37,7 +37,7 @@ export function OrdersPage()
           <div className="cart-text">Cart</div>
         </a>
       </div>
-    </div>
+    </Header>
 
     <div className="orders-page">
       <div className="page-title">Your Orders</div>
