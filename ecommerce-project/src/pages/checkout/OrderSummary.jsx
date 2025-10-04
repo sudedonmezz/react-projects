@@ -1,51 +1,9 @@
-import './CheckoutPage.css';
-import axios from 'axios';
 import dayjs from 'dayjs';
-import { useState, useEffect } from 'react';
-import './Checkout-header.css';
-import { formatMoney } from '../utils/money';
-import { Header } from '../components/Header';
-
-export function Checkout({ cart = [] }) {
-  // 1) Başlangıçta [] ver -> map/find patlamasın
-  const [deliveryOptions, setDeliveryOptions] = useState([]);
-  const [paymentSummary, setPaymentSummary] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let alive = true;
-
-    Promise.all([
-      axios.get('/api/delivery-options?expand=estimatedDeliveryTime'),
-      axios.get('/api/payment-summary'),
-    ])
-      .then(([respOptions, respSummary]) => {
-        if (!alive) return;
-        setDeliveryOptions(Array.isArray(respOptions.data) ? respOptions.data : []);
-        setPaymentSummary(respSummary.data ?? null);
-      })
-      .catch((err) => {
-        console.error('Checkout load error:', err);
-        // Hata durumunda da boş dizi ver ki UI çalışsın
-        setDeliveryOptions([]);
-        setPaymentSummary(null);
-      })
-      .finally(() => {
-        if (alive) setLoading(false);
-      });
-
-    return () => { alive = false; };
-  }, []);
-
+import { formatMoney } from '../../utils/money';
+export function OrderSummary({cart,deliveryOptions,loading})
+{
   return (
-    <>
-      <Header cart={cart} />
-
-      <div className="checkout-page">
-        <div className="page-title">Review your order</div>
-
-        <div className="checkout-grid">
-          <div className="order-summary">
+       <div className="order-summary">
             {cart.map((cartItem) => {
               // 2) Güvenli erişim: option bulunamayabilir
               const selected = deliveryOptions.find(
@@ -120,55 +78,5 @@ export function Checkout({ cart = [] }) {
               );
             })}
           </div>
-
-          <div className="payment-summary">
-            <div className="payment-summary-title">Payment Summary</div>
-
-            {paymentSummary ? (
-              <>
-                <div className="payment-summary-row">
-                  <div>Items ({paymentSummary.totalItems}):</div>
-                  <div className="payment-summary-money">
-                    {formatMoney(paymentSummary.productCostCents)}
-                  </div>
-                </div>
-
-                <div className="payment-summary-row">
-                  <div>Shipping &amp; handling:</div>
-                  <div className="payment-summary-money">
-                    {formatMoney(paymentSummary.shippingCostCents)}
-                  </div>
-                </div>
-
-                <div className="payment-summary-row subtotal-row">
-                  <div>Total before tax:</div>
-                  <div className="payment-summary-money">
-                    {formatMoney(paymentSummary.totalCostBeforeTaxCents)}
-                  </div>
-                </div>
-
-                <div className="payment-summary-row">
-                  <div>Estimated tax (10%):</div>
-                  <div className="payment-summary-money">
-                    {formatMoney(paymentSummary.taxCents)}
-                  </div>
-                </div>
-
-                <div className="payment-summary-row total-row">
-                  <div>Order total:</div>
-                  <div className="payment-summary-money">
-                    {formatMoney(paymentSummary.totalCostCents)}
-                  </div>
-                </div>
-
-                <button className="place-order-button button-primary">Place your order</button>
-              </>
-            ) : (
-              <div className="payment-summary-row">Loading…</div>
-            )}
-          </div>
-        </div>
-      </div>
-    </>
   );
 }

@@ -1,7 +1,7 @@
-import { HomePage } from './pages/HomePage';
-import {Checkout} from './pages/CheckoutPage';
+import { HomePage } from './pages/home/HomePage';
+import {Checkout} from './pages/checkout/CheckoutPage';
 import {Route, Routes} from 'react-router';
-import { OrdersPage } from './pages/OrdersPage';
+import { OrdersPage } from './pages/orders/OrdersPage';
 import {useEffect,useState} from 'react';
 import axios from 'axios';
 import './App.css'
